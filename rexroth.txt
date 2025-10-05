@@ -1,0 +1,6 @@
+E-0000|Erro de Exceção do Processador (Fatal)|Erro fatal no processador do drive.|Desligar e ligar o drive em 24V. Se persistir, contatar o serviço técnico.
+F9001|Chamada de Função Interna (Erro Fatal de Sistema)|Erro no firmware (software interno) com causa indefinida.|Desligar/Ligar o dispositivo. Se o erro persistir, substituir o dispositivo ou contatar o serviço técnico.
+F8022|Encoder 1: Sinais Incorretos|Cabo/Blindagem do encoder defeituosos; Sistema de medição defeituoso/sujo; Montagem incorreta.|Verificar/substituir o cabo ou o sistema de medição. Limpar sistema. Substituir a seção de controle ou o drive.
+F8023|Erro de Ligação Mecânica ou Conexão do Motor|Conexão mecânica entre rotor/encoder solta ou quebrada; Quebra de fase na fiação de alimentação do motor.|Verificar e reparar a conexão mecânica. Verificar a continuidade do cabo de alimentação do motor.
+F2086|Erro Módulo de Alimentação|Unidade de alimentação, resistor do barramento DC ou inversor/conversor sinaliza um erro na alimentação.|Remover a causa do erro na respectiva unidade de alimentação e, em seguida, limpar o erro.
+F4009|Falha de Barramento (Bus failure)|Master não troca dados cíclicos; Conexão Ethernet/Bus interrompida; Problemas de EMC.|Verificar status do master e cabos. Verificar blindagem/roteamento. Reduzir a carga de rede.
