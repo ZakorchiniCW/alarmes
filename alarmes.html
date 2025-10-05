@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Falhas Industriais</title>
+    <meta name="description" content="Site para consultas de alarmes e falhas Siemens 840D, Micromaster e Rexroth.">
+    <meta name="author" content="cleiton wilson zakorchini">
+    <style>
+        /* Estilos CSS (Mantenha os estilos da resposta anterior aqui) */
+        body {
+            background-color: #2e2e2e;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            font-size: 3em;
+            margin: 10px 0;
+            color: #888;
+        }
+
+        .input-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .input-label {
+            font-size: 1em;
+            margin-bottom: 10px;
+            color: #cccccc;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: #ffffff;
+            font-size: 1.2em;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .clear-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .clear-button:hover {
+            color: #fff;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        /* Cores específicas para os botões */
+        .selection-button {
+            background-color: #00bcd4; /* Azul Claro */
+        }
+        .selection-button:hover {
+            background-color: #0097a7;
+        }
+
+        .search-button {
+            background-color: #ff9800; /* Laranja */
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .search-button:hover {
+            background-color: #e68900;
+        }
+        
+        .back-button {
+            background-color: #757575; /* Cinza */
+        }
+        .back-button:hover {
+            background-color: #616161;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            min-height: 50px;
+            text-align: left;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #383838;
+        }
+
+        .result-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .product-result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .product-result-table th, .product-result-table td {
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: left;
+            word-break: break-word; /* Garante que textos longos não estourem o layout */
+        }
+
+        .product-result-table th {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            font-weight: bold;
+        }
+
+        .share-icon {
+            font-size: 2em;
+            color: #00bcd4;
+            margin-top: 15px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+        }
+
+        .footer {
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        /* Classes para controle de visibilidade */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            body {
+                justify-content: flex-start;
+                padding-top: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header" id="main-header">Consulta de Falhas Industriais</div>
+
+        <div id="product-selection">
+            <div class="icon">🔍</div>
+            <div class="input-label">Selecione a linha de produto para pesquisa:</div>
+            <button class="action-button selection-button" onclick="selectProduct('840D')">CNC Siemens 840D</button>
+            <button class="action-button selection-button" onclick="selectProduct('Micromaster')">Micromaster (Inversor)</button>
+            <button class="action-button selection-button" onclick="selectProduct('Rexroth')">Rexroth (Drive/Servo)</button>
+        </div>
+
+        <div id="search-page" class="hidden">
+            <button class="action-button back-button" onclick="goBackToSelection()">← Voltar</button>
+
+            <div class="icon" id="search-icon">↔</div>
+            <div class="input-container">
+                <div class="input-label" id="alarm-label"></div>
+                <input type="text" id="alarmInput" class="input-field" placeholder="Digite o código da falha (ex: F0001)" onkeyup="checkEnter(event)">
+                <button class="clear-button" onclick="clearInput()">×</button>
+            </div>
+            <button class="action-button search-button" onclick="searchFault()">Procurar Falha</button>
+            
+            <div class="result-container">
+                <div id="resultText" class="result-text">Aguardando pesquisa...</div>
+                <div id="shareIcon" class="share-icon hidden"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">Create by C. W. Zakorchini<br>From CJF Solutions</div>
+
+    <script>
+        let currentProduct = null;
+        let coluna1 = [];
+        let coluna2 = [];
+        let micromasterFaults = [];
+        let rexrothFaults = [];
+        
+        // --- CONFIGURAÇÃO DE URLS (SUBSTITUA AQUI) ---
+        const USER = 'ZakorchiniCW'; // Seu usuário GitHub
+        const REPO = 'dbs';          // Seu repositório
+        const BRANCH = 'master';     // Sua branch principal
+
+        // URLs dos arquivos TXT no GitHub (para 840D)
+        const urlColuna1 = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/coluna1.txt`;
+        const urlColuna2 = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/coluna2.txt`;
+        
+        // NOVAS URLs dos arquivos TXT (para Micromaster e Rexroth)
+        const urlMicromaster = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/dados-falhas/micromaster_falhas.txt`;
+        const urlRexroth = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/dados-falhas/rexroth_falhas.txt`;
+        
+        
+        // --- FUNÇÕES DE CARREGAMENTO DE DADOS ---
+
+        async function fetch840dData() {
+            try {
+                const [response1, response2] = await Promise.all([
+                    fetch(urlColuna1),
+                    fetch(urlColuna2)
+                ]);
+
+                const text1 = await response1.text();
+                const text2 = await response2.text();
+
+                coluna1 = text1.split(/\s*,\s*/).filter(Boolean).map(Number);
+                coluna2 = text2.split(/\s*,\s*/).filter(Boolean).map(Number);
+                
+                console.log('Dados 840D carregados com sucesso!');
+            } catch (error) {
+                console.error('Erro ao buscar dados 840D:', error);
+            }
+        }
+        
+        async function fetchProductData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const text = await response.text();
+                
+                // Processa o texto no formato "CODIGO|DESCRICAO|CAUSAS|SOLUCAO"
+                return text.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line) // Remove linhas vazias
+                    .map(line => {
+                        const parts = line.split('|');
+                        // Se o formato não tiver 4 partes, pula a linha.
+                        if (parts.length < 4) return null; 
+                        return {
+                            codigo: parts[0].trim(),
+                            descricao: parts[1].trim(),
+                            causas: parts[2].trim(),
+                            solucao: parts[3].trim()
+                        };
+                    })
+                    .filter(item => item !== null);
+
+            } catch (error) {
+                console.error(`Erro ao buscar dados da URL ${url}:`, error);
+                return []; // Retorna array vazio em caso de falha
+            }
+        }
+
+        async function loadAllData() {
+            // Carrega 840D
+            await fetch840dData();
+
+            // Carrega Micromaster e Rexroth
+            micromasterFaults = await fetchProductData(urlMicromaster);
+            rexrothFaults = await fetchProductData(urlRexroth);
+            
+            console.log(`Micromaster: ${micromasterFaults.length} falhas carregadas.`);
+            console.log(`Rexroth: ${rexrothFaults.length} falhas carregadas.`);
+            
+            document.getElementById('resultText').textContent = "Sistema pronto para pesquisa.";
+        }
+
+        // Carrega todos os dados ao iniciar
+        window.onload = loadAllData;
+
+        // --- FUNÇÕES DE NAVEGAÇÃO E SELEÇÃO (Mesmas da resposta anterior) ---
+        
+        function selectProduct(product) {
+            // ... (Mantenha a lógica de navegação e mudança de labels aqui)
+            currentProduct = product;
+            document.getElementById('product-selection').classList.add('hidden');
+            document.getElementById('search-page').classList.remove('hidden');
+            
+            let label = "";
+            let placeholder = "";
+
+            if (product === '840D') {
+                label = "Alarme 840d - 7xxxxxx Digite Aqui:";
+                placeholder = "Ex: 700259";
+            } else if (product === 'Micromaster') {
+                label = "Falha Micromaster - Digite Aqui:";
+                placeholder = "Ex: F0001";
+            } else if (product === 'Rexroth') {
+                label = "Falha Rexroth - Digite Aqui:";
+                placeholder = "Ex: F8022";
+            }
+
+            document.getElementById('alarm-label').textContent = label;
+            document.getElementById('alarmInput').placeholder = placeholder;
+            document.getElementById('resultText').innerHTML = "Aguardando pesquisa...";
+            document.getElementById('shareIcon').classList.add('hidden');
+            clearInput();
+        }
+
+        function goBackToSelection() {
+            // ... (Mantenha a lógica de retorno aqui)
+            currentProduct = null;
+            document.getElementById('search-page').classList.add('hidden');
+            document.getElementById('product-selection').classList.remove('hidden');
+            document.getElementById('resultText').textContent = "Aguardando pesquisa...";
+            document.getElementById('shareIcon').classList.add('hidden');
+        }
+
+        // --- Função de Pesquisa Unificada ---
+
+        function searchFault() {
+            var input = document.getElementById("alarmInput").value.trim().toUpperCase();
+            var resultElement = document.getElementById("resultText");
+            var shareIcon = document.getElementById("shareIcon");
+
+            resultElement.innerHTML = "";
+            shareIcon.classList.add("hidden");
+
+            if (!input) {
+                resultElement.textContent = "Por favor, digite o código da falha/alarme.";
+                return;
+            }
+            
+            if (currentProduct === 'Micromaster' && micromasterFaults.length === 0) {
+                 resultElement.textContent = "Erro: Dados do Micromaster não carregados. Verifique sua conexão e o URL do GitHub.";
+                 return;
+            }
+            if (currentProduct === 'Rexroth' && rexrothFaults.length === 0) {
+                 resultElement.textContent = "Erro: Dados do Rexroth não carregados. Verifique sua conexão e o URL do GitHub.";
+                 return;
+            }
+
+            if (currentProduct === '840D') {
+                search840d(input, resultElement, shareIcon);
+            } else if (currentProduct === 'Micromaster') {
+                searchMicromasterOrRexroth(input, micromasterFaults, resultElement, shareIcon);
+            } else if (currentProduct === 'Rexroth') {
+                searchMicromasterOrRexroth(input, rexrothFaults, resultElement, shareIcon);
+            }
+        }
+
+        // --- FUNÇÕES DE BUSCA (Mesmas da resposta anterior, mas agora usam as novas arrays carregadas) ---
+        
+        function search840d(input, resultElement, shareIcon) {
+            var alarmValue = parseInt(input);
+
+            if (isNaN(alarmValue) || !coluna1.includes(alarmValue)) {
+                resultElement.textContent = "Valor inválido ou alarme 840D não encontrado!";
+                return;
+            }
+            // ... (lógica de busca 840D)
+            var index = coluna1.indexOf(alarmValue);
+            if (index !== -1 && coluna2[index] !== undefined) {
+                var dbValue = coluna2[index];
+                var dbxValue = (dbValue / 10).toFixed(1);
+                var resultText = "DB2.DBx " + dbxValue;
+                resultElement.textContent = resultText;
+                shareIcon.classList.remove("hidden");
+                shareIcon.onclick = function() { shareResult(input, resultText, currentProduct); };
+            } else {
+                resultElement.textContent = "Alarme 840D não encontrado.";
+            }
+        }
+        
+        function searchMicromasterOrRexroth(input, dataArray, resultElement, shareIcon) {
+            const normalizedInput = input.replace(/-/g, '').toUpperCase();
+            
+            // Busca o código, tratando F0001 e F-0001 como iguais
+            const fault = dataArray.find(item => item.codigo.replace(/-/g, '').toUpperCase() === normalizedInput);
+            
+            if (fault) {
+                const resultHTML = `
+                    <div class="result-text" style="text-align: left; margin-bottom: 10px;">Falha Encontrada: ${fault.codigo}</div>
+                    <table class="product-result-table">
+                        <tr><th>Descrição</th><td>${fault.descricao}</td></tr>
+                        <tr><th>Causas Principais</th><td>${fault.causas}</td></tr>
+                        <tr><th>Solução/Ação Recomendada</th><td>${fault.solucao}</td></tr>
+                    </table>
+                `;
+                resultElement.innerHTML = resultHTML;
+                shareIcon.classList.remove("hidden");
+
+                const shareText = `Falha ${fault.codigo} (${currentProduct}): ${fault.descricao}. Causa: ${fault.causas}. Solução: ${fault.solucao}`;
+                shareIcon.onclick = function() { shareResult(input, shareText, currentProduct); };
+            } else {
+                resultElement.textContent = `Falha '${input}' não encontrada para ${currentProduct}.`;
+            }
+        }
+
+        function clearInput() {
+            document.getElementById("alarmInput").value = "";
+        }
+        
+        function shareResult(input, result, product) {
+            var message = "Consulta de Falha Industrial:\n\n" +
+                          "Produto: " + product + "\n" +
+                          "Código Digitado: " + input + "\n" +
+                          "Resultado: " + result + "\n\n" +
+                          "Para novas consultas acesse:\n\n" +
+                          "https://zakorchinicw.github.io/dbs/index.html"; 
+
+            var whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function checkEnter(e) {
+            if (e.key === "Enter") {
+                searchFault();
+            }
+        }
+    </script>
+</body>
+</html>
