@@ -1,0 +1,5 @@
+F0001|Sobrecorrente|Potência motor/inversor não corresponde; Curto-circuito ou Falha à Terra nos cabos do motor.|Verificar a correspondência de potência e cabos. Ajustar parâmetros do motor (P0307, P0350). Aumentar o tempo de rampa. Reduzir o nível de boost.
+F0002|Sobretensão|Tensão de alimentação principal muito alta; Motor em modo regenerativo (desaceleração rápida ou arrastado por carga).|Verificar se a tensão de alimentação (P0210) está dentro dos limites. Habilitar e parametrizar o controlador DC-link (P1240). Ajustar o tempo de desaceleração (P1121).
+F0003|Subtensão|Falha no fornecimento principal. Tensão fora dos limites.|Verificar tensão de alimentação (P0210). Garantir que a fonte de alimentação não seja suscetível a falhas temporárias.
+F0004|Sobretemperatura do Inversor|Ventilação inadequada; Temperatura ambiente muito alta.|Verificar o funcionamento do ventilador. Reduzir a temperatura ambiente (garantir que esteja dentro do especificado).
+F0005|Sobrevelocidade|Velocidade do motor excede o limite máximo (P1082).|Verificar o limite de velocidade. Verificar a configuração do encoder (se usado).
