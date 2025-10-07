@@ -211,12 +211,12 @@
             
             <div class="result-container">
                 <div id="resultText" class="result-text">Aguardando pesquisa...</div>
-                <div id="shareIcon" class="share-icon hidden"></div>
+                <div id="shareIcon" class="share-icon hidden" style:"background-color:green; font-size: 36px; margin:20px 120px 0px 120px;">✆</div>
             </div>
         </div>
     </div>
     
-    <div class="footer">Create by C. W. Zakorchini<br>From CJF Solutions</div>
+    <div class="footer">Create by C. W. Zakorchini</div>
 
     <script>
         let currentProduct = null;
@@ -231,12 +231,12 @@
         const BRANCH = 'master';     // Sua branch principal
 
         // URLs dos arquivos TXT no GitHub (para 840D)
-        const urlColuna1 = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/coluna1.txt`;
-        const urlColuna2 = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/coluna2.txt`;
+        const urlColuna1 = `https://raw.githubusercontent.com/ZakorchiniCW/alarmes/refs/heads/main/coluna1.txt`;
+        const urlColuna2 = `https://raw.githubusercontent.com/ZakorchiniCW/alarmes/refs/heads/main/coluna2.txt`;
         
         // NOVAS URLs dos arquivos TXT (para Micromaster e Rexroth)
-        const urlMicromaster = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/dados-falhas/micromaster_falhas.txt`;
-        const urlRexroth = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/dados-falhas/rexroth_falhas.txt`;
+        const urlMicromaster = `https://raw.githubusercontent.com/ZakorchiniCW/alarmes/refs/heads/main/micromaster.txt`;
+        const urlRexroth = `https://raw.githubusercontent.com/ZakorchiniCW/alarmes/refs/heads/main/rexroth.txt`;
         
         
         // --- FUNÇÕES DE CARREGAMENTO DE DADOS ---
